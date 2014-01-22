@@ -362,9 +362,11 @@
 
 
     NanoScroll.prototype.preventScrolling = function(e, direction) {
+      /*
       if (!this.isActive) {
         return;
       }
+      */
       if (e.type === DOMSCROLL) {
         if (direction === DOWN && e.originalEvent.detail > 0 || direction === UP && e.originalEvent.detail < 0) {
           e.preventDefault();
@@ -465,6 +467,7 @@
         drag: function(e) {
           _this.sliderY = e.pageY - _this.$el.offset().top - _this.offsetY;
           _this.scroll();
+          _this.updateScrollValues();
           if (_this.contentScrollTop >= _this.maxScrollTop && _this.prevScrollTop !== _this.maxScrollTop) {
             _this.$el.trigger('scrollend');
           } else if (_this.contentScrollTop === 0 && _this.prevScrollTop !== 0) {
@@ -488,10 +491,10 @@
           return false;
         },
         scroll: function(e) {
-          _this.updateScrollValues();
           if (_this.isBeingDragged) {
             return;
           }
+          _this.updateScrollValues();
           if (!_this.iOSNativeScrolling) {
             _this.sliderY = _this.sliderTop;
             _this.setOnScrollStyles();
@@ -765,7 +768,7 @@
         return;
       }
       this.reset();
-      this.scrollTop(this.$el.find(node).get(0).offsetTop);
+      this.scrollTop($(node).get(0).offsetTop);
       return this;
     };
 
@@ -780,9 +783,8 @@
 
 
     NanoScroll.prototype.stop = function() {
-      if (cAF && this.scrollRAF) {
+      if (cAF) {
         cAF(this.scrollRAF);
-        this.scrollRAF = null;
       }
       this.stopped = true;
       this.removeEvents();
@@ -859,10 +861,10 @@
       }
       if (settings && typeof settings === "object") {
         $.extend(scrollbar.options, settings);
-        if (settings.scrollBottom != null) {
+        if (settings.scrollBottom) {
           return scrollbar.scrollBottom(settings.scrollBottom);
         }
-        if (settings.scrollTop != null) {
+        if (settings.scrollTop) {
           return scrollbar.scrollTop(settings.scrollTop);
         }
         if (settings.scrollTo) {
